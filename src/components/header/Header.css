@@ -1,4 +1,5 @@
 .header {
+  background-color: #fff;
   display: flex;
   justify-content: space-evenly;
   border-bottom: 0.1px solid lightgray;
