@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Feed.css";
 import CreateIcon from "@material-ui/icons/Create";
 import ImageIcon from "@material-ui/icons/Image";
@@ -11,11 +11,34 @@ import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
 import SendOutlinedIcon from "@material-ui/icons/SendOutlined";
 
 import Post from "./Post";
-
+import { db } from "../../Firebase";
+import firebase from "firebase";
 const Feed = () => {
+  const [message, setMessage] = useState("");
   const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    db.collection("posts")
+      .orderBy("timestamp", "desc")
+      .onSnapshot((snapshot) =>
+        setPosts(
+          snapshot.docs.map((doc) => ({
+            id: doc.id,
+            data: doc.data(),
+          }))
+        )
+      );
+  }, []);
   const sendPost = (e) => {
     e.preventDefault();
+    db.collection("posts").add({
+      name: "Ala Hamadi",
+      description: "test description",
+      message: message,
+      photoUrl: "",
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+    setMessage("");
   };
   const inputOption = (Icon, title) => {
     return (
@@ -32,7 +55,11 @@ const Feed = () => {
         <div className='feed_input'>
           <CreateIcon />
           <form>
-            <input type='text' />
+            <input
+              type='text'
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
             <button onClick={sendPost} type='submit'>
               Send
             </button>
@@ -52,11 +79,13 @@ const Feed = () => {
         </div>
       </div>
       {/* Posts  */}
-      {posts.map((post) => (
+      {posts.map(({ id, data: { name, description, message, photoUrl } }) => (
         <Post
-          name='Ala Hamadi'
-          description='this is description'
-          message='this is message'
+          key={id}
+          name={name}
+          description={description}
+          message={message}
+          photoUrl={photoUrl}
           LikeButton={inputOption(
             <ThumbUpOutlinedIcon style={{ color: "gray" }} />,
             "Like"
@@ -75,27 +104,6 @@ const Feed = () => {
           )}
         />
       ))}
-      <Post
-        name='Ala Hamadi'
-        description='this is description'
-        message='this is message'
-        LikeButton={inputOption(
-          <ThumbUpOutlinedIcon style={{ color: "gray" }} />,
-          "Like"
-        )}
-        CommentButton={inputOption(
-          <ChatOutlinedIcon style={{ color: "gray" }} />,
-          "Comment"
-        )}
-        ShareButton={inputOption(
-          <ShareOutlinedIcon style={{ color: "gray" }} />,
-          "Share"
-        )}
-        SendButton={inputOption(
-          <SendOutlinedIcon style={{ color: "gray" }} />,
-          "Send"
-        )}
-      />
     </div>
   );
 };
