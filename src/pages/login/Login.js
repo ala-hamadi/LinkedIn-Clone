@@ -1,19 +1,74 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Login.css";
 import linkedin from "../../assets/images/linkedin.png";
+import { auth } from "../../Firebase";
+import { useDispatch } from "react-redux";
+import login from "../../features/userSlice";
 const Login = () => {
-  const handleRegister = () => {};
-  const handleLogin = () => {};
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [profileUrlPic, setProfileUrlPic] = useState("");
+
+  const dispatch = useDispatch();
+  const handleRegister = () => {
+    if (!name) return alert("Please enter a full name");
+    auth
+      .createUserWithEmailAndPassword(email, password)
+      .then((userAuth) => {
+        userAuth.user
+          .updateProfile({
+            displayName: name,
+            photoURL: profileUrlPic,
+          })
+          .then(() => {
+            dispatch(
+              login({
+                email: email,
+                uid: userAuth.user.uid,
+                name: name,
+                photoURL: profileUrlPic,
+              })
+            );
+          });
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
+  const handleLogin = (e) => {
+    e.preventDefault();
+  };
 
   return (
     <div className='login'>
       <img src={linkedin} alt='' />
 
       <form>
-        <input type='text' placeholder='Full name (required)' />
-        <input type='text' placeholder='Profile pic URL (optional)' />
-        <input type='Email' placeholder='Email (required)' />
-        <input type='Password' placeholder='Password (required)' />
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          type='text'
+          placeholder='Full name (required)'
+        />
+        <input
+          value={profileUrlPic}
+          onChange={(e) => setProfileUrlPic(e.target.value)}
+          type='text'
+          placeholder='Profile pic URL (optional)'
+        />
+        <input
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          type='Email'
+          placeholder='Email (required)'
+        />
+        <input
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          type='Password'
+          placeholder='Password (required)'
+        />
         <button type='submit' onClick={handleLogin}>
           Sign In
         </button>
