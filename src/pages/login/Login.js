@@ -3,7 +3,7 @@ import "./Login.css";
 import linkedin from "../../assets/images/linkedin.png";
 import { auth } from "../../Firebase";
 import { useDispatch } from "react-redux";
-import login from "../../features/userSlice";
+import { login } from "../../features/userSlice";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,10 +24,10 @@ const Login = () => {
           .then(() => {
             dispatch(
               login({
-                email: email,
+                email: userAuth.user.email,
                 uid: userAuth.user.uid,
-                name: name,
-                photoURL: profileUrlPic,
+                displayName: userAuth.user.displayName,
+                photoURL: userAuth.user.photoURL,
               })
             );
           });
@@ -38,6 +38,20 @@ const Login = () => {
   };
   const handleLogin = (e) => {
     e.preventDefault();
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .then((userAuth) => {
+        console.log(userAuth);
+        dispatch(
+          login({
+            email: userAuth.user.email,
+            uid: userAuth.user.uid,
+            displayName: userAuth.user.displayName,
+            photoURL: userAuth.user.photoURL,
+          })
+        );
+      })
+      .catch((error) => alert(error));
   };
 
   return (

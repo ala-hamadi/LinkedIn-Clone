@@ -9,13 +9,16 @@ import ThumbUpOutlinedIcon from "@material-ui/icons/ThumbUpOutlined";
 import ChatOutlinedIcon from "@material-ui/icons/ChatOutlined";
 import ShareOutlinedIcon from "@material-ui/icons/ShareOutlined";
 import SendOutlinedIcon from "@material-ui/icons/SendOutlined";
-
+import FlipMove from "react-flip-move";
 import Post from "./Post";
 import { db } from "../../Firebase";
 import firebase from "firebase";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../features/userSlice";
 const Feed = () => {
   const [message, setMessage] = useState("");
   const [posts, setPosts] = useState([]);
+  const user = useSelector(selectUser);
 
   useEffect(() => {
     db.collection("posts")
@@ -31,11 +34,12 @@ const Feed = () => {
   }, []);
   const sendPost = (e) => {
     e.preventDefault();
+    alert(user?.email);
     db.collection("posts").add({
-      name: "Ala Hamadi",
-      description: "test description",
+      name: user?.displayName,
+      description: user?.email,
       message: message,
-      photoUrl: "",
+      photoUrl: user?.photoURL || "",
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     });
     setMessage("");
@@ -79,31 +83,33 @@ const Feed = () => {
         </div>
       </div>
       {/* Posts  */}
-      {posts.map(({ id, data: { name, description, message, photoUrl } }) => (
-        <Post
-          key={id}
-          name={name}
-          description={description}
-          message={message}
-          photoUrl={photoUrl}
-          LikeButton={inputOption(
-            <ThumbUpOutlinedIcon style={{ color: "gray" }} />,
-            "Like"
-          )}
-          CommentButton={inputOption(
-            <ChatOutlinedIcon style={{ color: "gray" }} />,
-            "Comment"
-          )}
-          ShareButton={inputOption(
-            <ShareOutlinedIcon style={{ color: "gray" }} />,
-            "Share"
-          )}
-          SendButton={inputOption(
-            <SendOutlinedIcon style={{ color: "gray" }} />,
-            "Send"
-          )}
-        />
-      ))}
+      <FlipMove>
+        {posts.map(({ id, data: { name, description, message, photoUrl } }) => (
+          <Post
+            key={id}
+            name={name}
+            description={description}
+            message={message}
+            photoUrl={photoUrl}
+            LikeButton={inputOption(
+              <ThumbUpOutlinedIcon style={{ color: "gray" }} />,
+              "Like"
+            )}
+            CommentButton={inputOption(
+              <ChatOutlinedIcon style={{ color: "gray" }} />,
+              "Comment"
+            )}
+            ShareButton={inputOption(
+              <ShareOutlinedIcon style={{ color: "gray" }} />,
+              "Share"
+            )}
+            SendButton={inputOption(
+              <SendOutlinedIcon style={{ color: "gray" }} />,
+              "Send"
+            )}
+          />
+        ))}
+      </FlipMove>
     </div>
   );
 };
