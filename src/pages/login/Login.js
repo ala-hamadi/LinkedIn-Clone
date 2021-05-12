@@ -5,13 +5,15 @@ import { auth } from "../../Firebase";
 import { useDispatch } from "react-redux";
 import { login } from "../../features/userSlice";
 const Login = () => {
+  const [toogle, setToogle] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [profileUrlPic, setProfileUrlPic] = useState("");
 
   const dispatch = useDispatch();
-  const handleRegister = () => {
+  const handleRegister = (e) => {
+    e.preventDefault();
     if (!name) return alert("Please enter a full name");
     auth
       .createUserWithEmailAndPassword(email, password)
@@ -59,18 +61,23 @@ const Login = () => {
       <img src={linkedin} alt='' />
 
       <form>
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          type='text'
-          placeholder='Full name (required)'
-        />
-        <input
-          value={profileUrlPic}
-          onChange={(e) => setProfileUrlPic(e.target.value)}
-          type='text'
-          placeholder='Profile pic URL (optional)'
-        />
+        {!toogle && (
+          <>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              type='text'
+              placeholder='Full name (required)'
+            />
+            <input
+              value={profileUrlPic}
+              onChange={(e) => setProfileUrlPic(e.target.value)}
+              type='text'
+              placeholder='Profile pic URL (optional)'
+            />
+          </>
+        )}
+
         <input
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -83,16 +90,31 @@ const Login = () => {
           type='Password'
           placeholder='Password (required)'
         />
-        <button type='submit' onClick={handleLogin}>
-          Sign In
-        </button>
+        {toogle ? (
+          <button type='submit' onClick={handleLogin}>
+            Sign In
+          </button>
+        ) : (
+          <button type='submit' onClick={handleRegister}>
+            Sign Up
+          </button>
+        )}
       </form>
-      <p>
-        Not a member?{" "}
-        <span className='login_register' onClick={handleRegister}>
-          Register Now
-        </span>
-      </p>
+      {toogle ? (
+        <p>
+          Not a member?{" "}
+          <span className='login_register' onClick={() => setToogle(false)}>
+            Register Now
+          </span>
+        </p>
+      ) : (
+        <p>
+          A member?{" "}
+          <span className='login_register' onClick={() => setToogle(true)}>
+            Login Now
+          </span>
+        </p>
+      )}
     </div>
   );
 };
