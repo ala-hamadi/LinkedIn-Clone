@@ -14,7 +14,8 @@ const Login = () => {
   const dispatch = useDispatch();
   const handleRegister = (e) => {
     e.preventDefault();
-    if (!name) return alert("Please enter a full name");
+    if (!name || !password || !email)
+      return alert("Please enter your credentials");
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((userAuth) => {

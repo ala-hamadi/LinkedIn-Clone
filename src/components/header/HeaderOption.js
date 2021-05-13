@@ -3,7 +3,6 @@ import "./HeaderOption.css";
 import { Avatar } from "@material-ui/core";
 
 const HeaderOption = ({ Icon, title, avatar, click, displayName }) => {
-  // alert(displayName);
   return (
     <div className='headerOption'>
       {Icon && <Icon className='headerOption_icon' onClick={click} />}

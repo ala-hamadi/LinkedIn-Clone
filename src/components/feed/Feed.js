@@ -34,7 +34,6 @@ const Feed = () => {
   }, []);
   const sendPost = (e) => {
     e.preventDefault();
-    alert(user?.email);
     db.collection("posts").add({
       name: user?.displayName,
       description: user?.email,
