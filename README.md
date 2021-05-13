@@ -3,7 +3,7 @@
 [Live Demo](https://linkedin-clone-app-fc849.web.app/)
 :neckbeard:
 
-![](https://i.ibb.co/TrTXqYm/LinledIn.png)
+![](https://i.ibb.co/4J5v9Jc/LinkedIn.png)
 
 ## Installing
 
